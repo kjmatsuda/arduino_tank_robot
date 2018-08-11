@@ -25,6 +25,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,8 +36,9 @@ import android.widget.Toast;
 import com.arsjp.blelib.BleService;
 import com.arsjp.blelib.ScanActivity;
 
+import java.util.Locale;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements TextToSpeech.OnInitListener {
     public static final String TAG = "Main";            //デバッグログ用のタグ名
     private static final int REQUEST_SCAN_RESULTS = 1;//BLE接続先探しメッセージの識別定数
     private BluetoothDevice mDevice = null;             //BluetoothDeviceのインスタンス
@@ -55,6 +58,21 @@ public class MainActivity extends Activity {
     private float mCurAng;                          //現在のハンドルの角度
     private ImageView mViewWheel;                   //ハンドルイメージビューのインスタンス
     private RadioGroup mDrive;                      //ラジオボタングループのインスタンス
+    private TextToSpeech mTTS = null;                    //テキスト読み上げのインスタンス
+
+    @Override
+    public void onInit(int status) {
+        if (TextToSpeech.SUCCESS == status) {
+            if (mTTS.isLanguageAvailable(Locale.JAPAN) >= TextToSpeech.LANG_AVAILABLE) {
+                mTTS.setLanguage(Locale.JAPAN);
+                speak("こんにちは、タンクロボットです。");
+            } else {
+                showMessage(getString(R.string.ER_TTS_JP));
+            }
+        } else {
+            showMessage(getString(R.string.ER_TTS_INIT));
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -243,6 +261,7 @@ public class MainActivity extends Activity {
                 }
             }
         });
+        mTTS =new TextToSpeech(this, this);
     }
 
     private void setSensor() {
@@ -315,6 +334,10 @@ public class MainActivity extends Activity {
             msg = msg + " " + ang + "°";
         }
         ((TextView) findViewById(R.id.txtMSG)).setText(msg);
+    }
+
+    private void speak(String msg) {
+        mTTS.speak(msg, TextToSpeech.QUEUE_FLUSH, null, this.hashCode() + "");
     }
 
     private void showMessage(String msg) {

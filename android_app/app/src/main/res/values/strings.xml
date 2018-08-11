@@ -29,4 +29,6 @@
     <string name="RIGHT">右折</string>
     <string name="LEFT">左折</string>
     <string name="Rotate">端末を回転させて操作してください。</string>
+    <string name="ER_TTS_INIT">読み上げを利用できません。</string>
+    <string name="ER_TTS_JP">日本語の読み上げを利用できません。</string>
 </resources>
