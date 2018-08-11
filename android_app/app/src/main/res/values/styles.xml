@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <style name="AppTheme" parent="android:Theme.Holo.Light"/>
+
+    // Set the text color to black
+    <style name="DialogLight" parent="android:Theme.Dialog">
+        <item name="android:windowTitleStyle">@style/MyTitleStyle</item>
+        <item name="android:textColor">#FF000000</item>
+    </style>
+
+    // Set the title text color to write
+    <style name="MyTitleStyle">
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="BtnForward" parent="android:Widget.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/btn_forward</item>
+    </style>
+
+    <style name="BtnStop" parent="android:Widget.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/btn_stop</item>
+    </style>
+
+    <style name="BtnBack" parent="android:Widget.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/btn_back</item>
+    </style>
+</resources>

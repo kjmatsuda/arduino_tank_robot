@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <Button android:id="@+id/scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:text="@string/connect"
+        android:onClick="onConnectButtonClick" />
+    <LinearLayout android:id="@+id/conn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <ImageView android:id="@+id/imgWheel"
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                android:background="@drawable/right0"/>
+            <RadioGroup android:id ="@+id/rdgDrive"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginLeft="80dp">
+                <RadioButton android:id="@+id/btnForward"
+                    style="@style/BtnForward"/>
+                <RadioButton android:id="@+id/btnStop"
+                    style="@style/BtnStop"
+                    android:checked="true"/>
+                <RadioButton android:id="@+id/btnBack"
+                    style="@style/BtnBack"/>
+            </RadioGroup>
+        </LinearLayout>
+        <TextView android:id="@+id/txtMSG"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/STOP"/>
+    </LinearLayout>
+</LinearLayout>

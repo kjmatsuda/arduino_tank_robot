@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">BLE Tank Robot</string>
+    <string name="connect">タップして、接続先を探します。</string>
+    <string name="ER1">認識できないメッセージ</string>
+    <string name="ER2">ピン番号サポート範囲外</string>
+    <string name="ER3">受信メッセージに","が見つかりません</string>
+    <string name="ER4">引数は数値ではありません</string>
+    <string name="ER5">出力値範囲外</string>
+    <string name="ER11">BLEサービス起動失敗</string>
+    <string name="ER12">BLEサービス接続失敗</string>
+    <string name="ER13">BLE送信失敗</string>
+    <string name="ER14">受信メッセージに"="が見つかりません</string>
+    <string name="ER15">認識できないメッセージ</string>
+    <string name="ER16">受信メッセージの文字列変換エラー</string>
+    <string name="ER21">BT Manager初期化失敗</string>
+    <string name="ER22">BT Adaptor初期化失敗</string>
+    <string name="ER23">BTスキャナを利用できません</string>
+    <string name="ER24">BT有効化失敗</string>
+    <string name="ER25">BLEデバイスアドレス未定義</string>
+    <string name="ER26">BLEデバイスを利用できません</string>
+    <string name="ER27">BLEサービスが見つかりません</string>
+    <string name="ER28">BLEキャラが見つかりません</string>
+    <string name="ER29">BLE受信メッセージ失敗</string>
+    <string name="STOP">停止</string>
+    <string name="FORWARD">前進</string>
+    <string name="BACK">後退</string>
+    <string name="RIGHT">右折</string>
+    <string name="LEFT">左折</string>
+    <string name="Rotate">端末を回転させて操作してください。</string>
+</resources>
