@@ -36,11 +36,14 @@ import android.widget.Toast;
 import com.arsjp.blelib.BleService;
 import com.arsjp.blelib.ScanActivity;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends Activity implements TextToSpeech.OnInitListener {
     public static final String TAG = "Main";            //デバッグログ用のタグ名
     private static final int REQUEST_SCAN_RESULTS = 1;//BLE接続先探しメッセージの識別定数
+    private static final int REQUEST_VOICE_MESSAGE = 2;//音声入力メッセージの識別定数
+
     private BluetoothDevice mDevice = null;             //BluetoothDeviceのインスタンス
     private Messenger mService = null;                  //Messengerインスタンス
     private boolean mConnect = false;                  //デバイスのBLE通信接続状態フラグ
@@ -65,7 +68,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         if (TextToSpeech.SUCCESS == status) {
             if (mTTS.isLanguageAvailable(Locale.JAPAN) >= TextToSpeech.LANG_AVAILABLE) {
                 mTTS.setLanguage(Locale.JAPAN);
-                speak("こんにちは、タンクロボットです。");
+                //speak("こんにちは、タンクロボットです。");
             } else {
                 showMessage(getString(R.string.ER_TTS_JP));
             }
@@ -113,24 +116,39 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     //device discovery result from ScanActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (resultCode) {
-            case Activity.RESULT_OK:
-                String deviceAddress = data.getStringExtra(BluetoothDevice.EXTRA_DEVICE);
-                mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
-                findViewById(R.id.scan).setVisibility(View.GONE);
-                try {
-                    Message msg = Message.obtain(null, BleService.MSG_CONNECT);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("VALUE", deviceAddress);
-                    msg.setData(bundle);
-                    mService.send(msg);
-                } catch (RemoteException e) {
-                    findViewById(R.id.scan).setVisibility(View.VISIBLE);
-                    showMessage(getString(R.string.ER12));
+        switch (requestCode) {
+            case REQUEST_SCAN_RESULTS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        String deviceAddress = data.getStringExtra(BluetoothDevice.EXTRA_DEVICE);
+                        mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
+                        findViewById(R.id.scan).setVisibility(View.GONE);
+                        try {
+                            Message msg = Message.obtain(null, BleService.MSG_CONNECT);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("VALUE", deviceAddress);
+                            msg.setData(bundle);
+                            mService.send(msg);
+
+                        } catch (RemoteException e) {
+                            findViewById(R.id.scan).setVisibility(View.VISIBLE);
+                            showMessage(getString(R.string.ER12));
+                        }
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        finish();
+                        break;
                 }
                 break;
-            case Activity.RESULT_CANCELED:
-                finish();
+            case REQUEST_VOICE_MESSAGE: //音声入力処理
+                if (resultCode == Activity.RESULT_OK) {
+                    ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    String resultsString = results.get(0);
+                    onListen(resultsString);
+                } else {
+                    Log.d(TAG, "onActivityResult by REQUEST_VOICE_MESSAGE:" + resultCode);
+                    showMessage("Voice Result:" + resultCode);
+                }
                 break;
         }
     }
@@ -338,6 +356,35 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
     private void speak(String msg) {
         mTTS.speak(msg, TextToSpeech.QUEUE_FLUSH, null, this.hashCode() + "");
+    }
+
+    public void onSpeakButtonClick(View view) {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "「前に」「後ろに」「止まれ」");
+        startActivityForResult(intent, REQUEST_VOICE_MESSAGE);
+    }
+
+    private void onListen(String msg) {
+        RadioGroup driveStatus = (RadioGroup)findViewById(R.id.rdgDrive);
+        switch (msg) {
+            case "前に":
+                speak("はい、前にいきます。");
+                driveStatus.check(R.id.btnForward);
+                break;
+            case "後ろに":
+                speak("はい、後ろにいきます。");
+                driveStatus.check(R.id.btnBack);
+                break;
+            case "止まれ":
+                speak("はい、止まります。");
+                driveStatus.check(R.id.btnStop);
+                break;
+            default:
+                speak(msg + "はわかりません。");
+                showMessage("「" + msg + "」" + "はわかりません。");
+                break;
+        }
     }
 
     private void showMessage(String msg) {
